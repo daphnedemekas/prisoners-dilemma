@@ -1,10 +1,10 @@
 # Prisoner's Dilemma Simulation with Active Inference
 
-This project implements a comprehensive simulation framework for studying the Prisoner's Dilemma using active inference agents. The simulation explores how agents with different learning rates and parameters evolve their strategies over time, both in pairwise interactions and in network settings.
+A simulation framework for studying the Prisoner's Dilemma using active inference agents. The project explores how agents with different learning rates and parameters evolve their strategies over time, both in pairwise interactions and in network settings.
 
 ## Overview
 
-The Prisoner's Dilemma is a fundamental game theory problem that explores cooperation vs. defection strategies. In this implementation, we use active inference agents that learn and adapt their strategies based on their interactions with other agents.
+The Prisoner's Dilemma is a fundamental game theory problem that explores cooperation vs. defection strategies. This implementation uses active inference agents that learn and adapt their strategies based on their interactions with other agents.
 
 ### Key Features
 
@@ -79,39 +79,39 @@ visualizer.plot_action_evolution(results['actions'])
 
 ## Simulation Results
 
-### Enhanced Agent Actions Over Time
+### Agent Actions Over Time
 
-![Enhanced Actions](src/figures/enhanced_actions.png)
+![Agent Actions](src/figures/enhanced_actions.png)
 
-This enhanced visualization shows the evolution of agent cooperation over time with improved styling and clarity. The top panel displays individual agent cooperation levels, while the bottom panel shows the overall population cooperation rate. The agents demonstrate learning dynamics as they adapt their strategies based on their interactions.
+The evolution of agent cooperation over time. The top panel shows individual agent cooperation levels, while the bottom panel displays the overall population cooperation rate. Agents demonstrate learning dynamics as they adapt their strategies based on interactions.
 
 ### Strategy Analysis Heatmap
 
 ![Strategy Heatmap](src/figures/strategy_heatmap.png)
 
-This heatmap reveals the temporal patterns of cooperation strategies. The left panel shows cooperation patterns over time using sliding windows, while the right panel displays the correlation matrix between agent strategies, revealing how coordinated or independent their behaviors are.
+Temporal patterns of cooperation strategies. The left panel shows cooperation patterns over time using sliding windows, while the right panel displays the correlation matrix between agent strategies, revealing how coordinated or independent their behaviors are.
 
-### Enhanced Reward Analysis
+### Reward Analysis
 
-![Enhanced Rewards](src/figures/enhanced_rewards.png)
+![Reward Analysis](src/figures/enhanced_rewards.png)
 
-This comprehensive reward analysis includes:
+Comprehensive reward analysis including:
 - **Individual Rewards**: How each agent's rewards change over time
 - **Cumulative Rewards**: Total accumulated rewards for each agent
 - **Cooperation vs Reward**: Relationship between cooperation rate and average rewards
 - **Reward Distribution**: Histogram showing the frequency of different reward values
 
-### Enhanced Network Visualization
+### Network Visualization
 
-![Enhanced Network](src/figures/enhanced_network.png)
+![Network Visualization](src/figures/enhanced_network.png)
 
-This enhanced network visualization shows both the network topology (left) and degree distribution (right) with detailed statistics. The network structure influences how strategies spread among agents in multi-agent simulations.
+Network topology (left) and degree distribution (right) with detailed statistics. The network structure influences how strategies spread among agents in multi-agent simulations.
 
 ### Comparison Analysis
 
 ![Comparison Analysis](src/figures/comparison_analysis.png)
 
-This comprehensive comparison shows how different learning rate and precision parameter combinations affect:
+How different learning rate and precision parameter combinations affect:
 - **Cooperation Rate Evolution**: How cooperation develops over time with diverse parameters
 - **Final Cooperation Rates**: End-state cooperation levels across different scenarios
 - **Convergence Times**: How quickly strategies stabilize with different learning dynamics
@@ -121,7 +121,7 @@ This comprehensive comparison shows how different learning rate and precision pa
 
 ![Learning Dynamics](src/figures/learning_dynamics.png)
 
-This analysis explores how different initial conditions and learning parameters affect strategy evolution:
+How different initial conditions and learning parameters affect strategy evolution:
 - **Initial Conditions Impact**: How starting states (cooperative vs. defecting) influence long-term behavior
 - **Individual Strategy Evolution**: How each agent's strategy develops over time
 - **Reward Dynamics**: How average rewards change with different learning scenarios
@@ -131,7 +131,7 @@ This analysis explores how different initial conditions and learning parameters 
 
 ### Learning Rate and Precision Effects
 
-The simulation reveals several important patterns:
+Several important patterns emerge:
 
 1. **Very Low Learning Rates (0.01)**: Agents converge slowly and may get stuck in suboptimal strategies
 2. **High Learning Rates (0.5)**: Agents adapt quickly but may oscillate between strategies, especially with high precision
@@ -158,7 +158,7 @@ In network simulations:
 
 ### Cooperation Rate Heatmap
 
-The parameter sweep reveals how different learning rate combinations affect cooperation:
+Different learning rate combinations affect cooperation:
 
 - **High-High Learning Rates**: Often lead to rapid convergence but lower cooperation
 - **Low-Low Learning Rates**: Slower convergence but potentially higher cooperation
@@ -183,11 +183,11 @@ The agents use the active inference framework, which includes:
 
 ### Reward Structure
 
-The standard Prisoner's Dilemma reward structure:
-- **Both Cooperate**: (3, 3) - Mutual cooperation
-- **Agent 1 Cooperates, Agent 2 Defects**: (1, 4) - Sucker's payoff
-- **Agent 1 Defects, Agent 2 Cooperates**: (4, 1) - Temptation
-- **Both Defect**: (2, 2) - Mutual defection
+The Prisoner's Dilemma reward structure:
+- **Both Cooperate**: (3.5, 3.5) - Mutual cooperation
+- **Agent 1 Cooperates, Agent 2 Defects**: (0.5, 4.5) - Sucker's payoff
+- **Agent 1 Defects, Agent 2 Cooperates**: (4.5, 0.5) - Temptation
+- **Both Defect**: (1.5, 1.5) - Mutual defection
 
 ### Transition Matrices
 
@@ -197,7 +197,7 @@ Agents learn transition matrices that model how their actions affect the game st
 
 ### Adding New Agent Types
 
-To add new agent types, extend the `PrisonersDilemmaAgent` class:
+Extend the `PrisonersDilemmaAgent` class:
 
 ```python
 class CustomAgent(PrisonersDilemmaAgent):
@@ -212,7 +212,7 @@ class CustomAgent(PrisonersDilemmaAgent):
 
 ### New Network Topologies
 
-To add new network types, extend the `NetworkSimulation` class:
+Extend the `NetworkSimulation` class:
 
 ```python
 def _create_custom_network(self):
@@ -222,7 +222,7 @@ def _create_custom_network(self):
 
 ### Additional Metrics
 
-To add new analysis metrics, extend the `SimulationVisualizer` class:
+Extend the `SimulationVisualizer` class:
 
 ```python
 def plot_custom_metric(self, data, save_name="custom_metric.png"):
