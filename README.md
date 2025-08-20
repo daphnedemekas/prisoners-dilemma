@@ -111,28 +111,41 @@ This enhanced network visualization shows both the network topology (left) and d
 
 ![Comparison Analysis](src/figures/comparison_analysis.png)
 
-This comprehensive comparison shows how different learning rate scenarios affect:
-- **Cooperation Rate Evolution**: How cooperation develops over time
-- **Final Cooperation Rates**: End-state cooperation levels
-- **Convergence Times**: How quickly strategies stabilize
+This comprehensive comparison shows how different learning rate and precision parameter combinations affect:
+- **Cooperation Rate Evolution**: How cooperation develops over time with diverse parameters
+- **Final Cooperation Rates**: End-state cooperation levels across different scenarios
+- **Convergence Times**: How quickly strategies stabilize with different learning dynamics
 - **Average Cumulative Rewards**: Long-term performance metrics
+
+### Learning Dynamics Analysis
+
+![Learning Dynamics](src/figures/learning_dynamics.png)
+
+This analysis explores how different initial conditions and learning parameters affect strategy evolution:
+- **Initial Conditions Impact**: How starting states (cooperative vs. defecting) influence long-term behavior
+- **Individual Strategy Evolution**: How each agent's strategy develops over time
+- **Reward Dynamics**: How average rewards change with different learning scenarios
+- **Strategy Stability**: Which parameter combinations lead to more stable strategies
 
 ## Key Findings
 
-### Learning Rate Effects
+### Learning Rate and Precision Effects
 
 The simulation reveals several important patterns:
 
-1. **Low Learning Rates (0.01-0.1)**: Agents tend to converge to stable strategies more slowly but may achieve higher cooperation rates
-2. **High Learning Rates (0.3-0.6)**: Agents adapt quickly but may oscillate between strategies
-3. **Asymmetric Learning**: When agents have different learning rates, the faster learner often dominates the interaction
+1. **Very Low Learning Rates (0.01)**: Agents converge slowly and may get stuck in suboptimal strategies
+2. **High Learning Rates (0.5)**: Agents adapt quickly but may oscillate between strategies, especially with high precision
+3. **Precision Parameter Impact**: High precision (α=10) leads to more deterministic behavior, while low precision (α=0.1) creates more exploration
+4. **Asymmetric Learning**: When agents have different learning rates, complex dynamics emerge with the faster learner often influencing the slower one
+5. **Initial Conditions Matter**: Starting states significantly impact long-term strategy evolution
 
 ### Cooperation Dynamics
 
-- **Initial Phase**: Agents explore different strategies randomly
-- **Learning Phase**: Agents begin to learn from their interactions
-- **Convergence Phase**: Agents settle into stable strategies
-- **Cooperation Emergence**: Under certain conditions, cooperation can emerge even without explicit coordination
+- **Initial Phase**: Agents explore different strategies based on their initial conditions and precision parameters
+- **Learning Phase**: Agents begin to learn from their interactions, with learning rate determining adaptation speed
+- **Convergence Phase**: Agents settle into stable strategies, with precision parameters affecting stability
+- **Cooperation Emergence**: Cooperation can emerge under various conditions, but the path depends heavily on learning rates and initial conditions
+- **Strategy Oscillations**: High learning rates with high precision can lead to oscillatory behavior rather than stable cooperation
 
 ### Network Effects
 

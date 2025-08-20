@@ -262,11 +262,14 @@ def create_network_visualization_enhanced(save_path="figures/enhanced_network.pn
 
 
 def create_comparison_analysis(save_path="figures/comparison_analysis.png"):
-    """Create comparison analysis of different scenarios."""
+    """Create comparison analysis of different scenarios with more diverse parameters."""
+    # More diverse scenarios with different learning rates, precision, and action selection
     scenarios = [
-        {"lr1": 0.05, "lr2": 0.05, "name": "Low Learning Rates", "color": "#3498DB"},
-        {"lr1": 0.3, "lr2": 0.3, "name": "High Learning Rates", "color": "#E74C3C"},
-        {"lr1": 0.05, "lr2": 0.3, "name": "Asymmetric Learning", "color": "#2ECC71"},
+        {"lr1": 0.01, "lr2": 0.01, "alpha1": 0.5, "alpha2": 0.5, "name": "Very Low Learning + Low Precision", "color": "#3498DB"},
+        {"lr1": 0.5, "lr2": 0.5, "alpha1": 5.0, "alpha2": 5.0, "name": "High Learning + High Precision", "color": "#E74C3C"},
+        {"lr1": 0.01, "lr2": 0.5, "alpha1": 1.0, "alpha2": 1.0, "name": "Asymmetric Learning", "color": "#2ECC71"},
+        {"lr1": 0.2, "lr2": 0.2, "alpha1": 0.1, "alpha2": 0.1, "name": "Medium Learning + Very Low Precision", "color": "#F39C12"},
+        {"lr1": 0.05, "lr2": 0.05, "alpha1": 10.0, "alpha2": 10.0, "name": "Low Learning + Very High Precision", "color": "#9B59B6"},
     ]
     
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
@@ -274,21 +277,21 @@ def create_comparison_analysis(save_path="figures/comparison_analysis.png"):
     all_results = {}
     
     for scenario in scenarios:
-        # Create agents
+        # Create agents with more diverse parameters
         agent_1, agent_2, D = construct_agents(
             lr_pB_1=scenario["lr1"], 
             lr_pB_2=scenario["lr2"], 
             factors_to_learn="all",
             action_selection="stochastic",
-            alpha_1=1.0,
-            alpha_2=1.0
+            alpha_1=scenario["alpha1"],
+            alpha_2=scenario["alpha2"]
         )
         
         # Create simulation
         sim = DualAgentSimulation(agent_1, agent_2)
         
         # Run simulation
-        results = sim.run_simulation(T=500, initial_obs_1=[0], initial_obs_2=[0])
+        results = sim.run_simulation(T=800, initial_obs_1=[0], initial_obs_2=[0])
         all_results[scenario['name']] = results
         
         # Plot cooperation rate
@@ -300,8 +303,8 @@ def create_comparison_analysis(save_path="figures/comparison_analysis.png"):
     
     ax1.set_xlabel('Time Step')
     ax1.set_ylabel('Cooperation Rate')
-    ax1.set_title('Cooperation Rate Comparison', fontweight='bold')
-    ax1.legend()
+    ax1.set_title('Cooperation Rate Comparison - Diverse Parameters', fontweight='bold')
+    ax1.legend(fontsize=10)
     ax1.grid(True, alpha=0.3)
     
     # Final cooperation rates
@@ -309,13 +312,15 @@ def create_comparison_analysis(save_path="figures/comparison_analysis.png"):
     scenario_names = []
     for scenario in scenarios:
         actions = all_results[scenario['name']]['actions']
-        final_rate = 1 - np.mean(actions[-50:], axis=1).mean()  # Last 50 steps
+        final_rate = 1 - np.mean(actions[-100:], axis=1).mean()  # Last 100 steps
         final_rates.append(final_rate)
-        scenario_names.append(scenario['name'])
+        scenario_names.append(scenario['name'][:20] + "...")  # Truncate long names
     
-    bars = ax2.bar(scenario_names, final_rates, color=[s['color'] for s in scenarios], alpha=0.7)
+    bars = ax2.bar(range(len(scenario_names)), final_rates, color=[s['color'] for s in scenarios], alpha=0.7)
     ax2.set_ylabel('Final Cooperation Rate')
     ax2.set_title('Final Cooperation Rates by Scenario', fontweight='bold')
+    ax2.set_xticks(range(len(scenario_names)))
+    ax2.set_xticklabels(scenario_names, rotation=45, ha='right')
     ax2.grid(True, alpha=0.3, axis='y')
     
     # Add value labels on bars
@@ -330,17 +335,19 @@ def create_comparison_analysis(save_path="figures/comparison_analysis.png"):
         actions = all_results[scenario['name']]['actions']
         # Find time to convergence (when cooperation rate stabilizes)
         cooperation_rate = 1 - np.mean(actions, axis=1)
-        # Simple convergence metric: when rate changes less than 0.1 for 20 steps
-        for t in range(20, len(cooperation_rate)):
-            if np.std(cooperation_rate[t-20:t]) < 0.1:
+        # More sophisticated convergence metric: when rate changes less than 0.05 for 30 steps
+        for t in range(30, len(cooperation_rate)):
+            if np.std(cooperation_rate[t-30:t]) < 0.05:
                 convergence_times.append(t)
                 break
         else:
             convergence_times.append(len(cooperation_rate))
     
-    bars = ax3.bar(scenario_names, convergence_times, color=[s['color'] for s in scenarios], alpha=0.7)
+    bars = ax3.bar(range(len(scenario_names)), convergence_times, color=[s['color'] for s in scenarios], alpha=0.7)
     ax3.set_ylabel('Convergence Time (Steps)')
     ax3.set_title('Time to Strategy Convergence', fontweight='bold')
+    ax3.set_xticks(range(len(scenario_names)))
+    ax3.set_xticklabels(scenario_names, rotation=45, ha='right')
     ax3.grid(True, alpha=0.3, axis='y')
     
     # Add value labels on bars
@@ -373,8 +380,157 @@ def create_comparison_analysis(save_path="figures/comparison_analysis.png"):
     ax4.set_xlabel('Time Step')
     ax4.set_ylabel('Average Cumulative Reward')
     ax4.set_title('Average Cumulative Rewards', fontweight='bold')
-    ax4.legend()
+    ax4.legend(fontsize=10)
     ax4.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(save_path, bbox_inches='tight', facecolor='white')
+    plt.close()
+
+
+def create_learning_dynamics_analysis(save_path="figures/learning_dynamics.png"):
+    """Create analysis of learning dynamics with different initial conditions."""
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
+    
+    # Different initial conditions and parameters
+    scenarios = [
+        {"lr1": 0.05, "lr2": 0.05, "alpha1": 1.0, "alpha2": 1.0, "init1": [0], "init2": [0], "name": "Both Start Cooperative", "color": "#3498DB"},
+        {"lr1": 0.05, "lr2": 0.05, "alpha1": 1.0, "alpha2": 1.0, "init1": [3], "init2": [3], "name": "Both Start Defecting", "color": "#E74C3C"},
+        {"lr1": 0.05, "lr2": 0.05, "alpha1": 1.0, "alpha2": 1.0, "init1": [0], "init2": [3], "name": "Mixed Initial State", "color": "#2ECC71"},
+        {"lr1": 0.3, "lr2": 0.3, "alpha1": 1.0, "alpha2": 1.0, "init1": [0], "init2": [0], "name": "High Learning Rate", "color": "#F39C12"},
+    ]
+    
+    for scenario in scenarios:
+        # Create agents
+        agent_1, agent_2, D = construct_agents(
+            lr_pB_1=scenario["lr1"], 
+            lr_pB_2=scenario["lr2"], 
+            factors_to_learn="all",
+            action_selection="stochastic",
+            alpha_1=scenario["alpha1"],
+            alpha_2=scenario["alpha2"]
+        )
+        
+        # Create simulation
+        sim = DualAgentSimulation(agent_1, agent_2)
+        
+        # Run simulation with different initial conditions
+        results = sim.run_simulation(T=600, initial_obs_1=scenario["init1"], initial_obs_2=scenario["init2"])
+        
+        # Plot cooperation rate
+        actions = results['actions']
+        cooperation_rate = 1 - np.mean(actions, axis=1)
+        time_steps = np.arange(len(cooperation_rate))
+        ax1.plot(time_steps, cooperation_rate, color=scenario['color'], linewidth=2.5, 
+                label=scenario['name'], alpha=0.8)
+    
+    ax1.set_xlabel('Time Step')
+    ax1.set_ylabel('Cooperation Rate')
+    ax1.set_title('Learning Dynamics: Initial Conditions Matter', fontweight='bold')
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+    
+    # Strategy evolution analysis
+    for scenario in scenarios:
+        agent_1, agent_2, D = construct_agents(
+            lr_pB_1=scenario["lr1"], 
+            lr_pB_2=scenario["lr2"], 
+            factors_to_learn="all",
+            action_selection="stochastic",
+            alpha_1=scenario["alpha1"],
+            alpha_2=scenario["alpha2"]
+        )
+        
+        sim = DualAgentSimulation(agent_1, agent_2)
+        results = sim.run_simulation(T=600, initial_obs_1=scenario["init1"], initial_obs_2=scenario["init2"])
+        
+        # Plot individual agent strategies
+        actions = results['actions']
+        for i in range(2):
+            cooperation = 1 - actions[:, i]
+            ax2.plot(time_steps, cooperation, color=scenario['color'], linewidth=2, 
+                    alpha=0.6, linestyle='--' if i == 1 else '-')
+    
+    ax2.set_xlabel('Time Step')
+    ax2.set_ylabel('Individual Cooperation Level')
+    ax2.set_title('Individual Agent Strategy Evolution', fontweight='bold')
+    ax2.grid(True, alpha=0.3)
+    
+    # Reward dynamics
+    for scenario in scenarios:
+        agent_1, agent_2, D = construct_agents(
+            lr_pB_1=scenario["lr1"], 
+            lr_pB_2=scenario["lr2"], 
+            factors_to_learn="all",
+            action_selection="stochastic",
+            alpha_1=scenario["alpha1"],
+            alpha_2=scenario["alpha2"]
+        )
+        
+        sim = DualAgentSimulation(agent_1, agent_2)
+        results = sim.run_simulation(T=600, initial_obs_1=scenario["init1"], initial_obs_2=scenario["init2"])
+        
+        actions = results['actions']
+        rewards = np.zeros((len(actions), 2))
+        for t in range(len(actions)):
+            action_1, action_2 = actions[t]
+            if action_1 == 0 and action_2 == 0:
+                rewards[t] = [3, 3]
+            elif action_1 == 0 and action_2 == 1:
+                rewards[t] = [1, 4]
+            elif action_1 == 1 and action_2 == 0:
+                rewards[t] = [4, 1]
+            else:
+                rewards[t] = [2, 2]
+        
+        avg_reward = np.mean(rewards, axis=1)
+        ax3.plot(time_steps, avg_reward, color=scenario['color'], linewidth=2.5, 
+                label=scenario['name'], alpha=0.8)
+    
+    ax3.set_xlabel('Time Step')
+    ax3.set_ylabel('Average Reward')
+    ax3.set_title('Average Reward Dynamics', fontweight='bold')
+    ax3.legend()
+    ax3.grid(True, alpha=0.3)
+    
+    # Strategy stability analysis
+    stability_metrics = []
+    scenario_names = []
+    
+    for scenario in scenarios:
+        agent_1, agent_2, D = construct_agents(
+            lr_pB_1=scenario["lr1"], 
+            lr_pB_2=scenario["lr2"], 
+            factors_to_learn="all",
+            action_selection="stochastic",
+            alpha_1=scenario["alpha1"],
+            alpha_2=scenario["alpha2"]
+        )
+        
+        sim = DualAgentSimulation(agent_1, agent_2)
+        results = sim.run_simulation(T=600, initial_obs_1=scenario["init1"], initial_obs_2=scenario["init2"])
+        
+        actions = results['actions']
+        cooperation_rate = 1 - np.mean(actions, axis=1)
+        
+        # Calculate stability metric (inverse of variance in last 100 steps)
+        final_variance = np.var(cooperation_rate[-100:])
+        stability = 1.0 / (1.0 + final_variance)  # Higher is more stable
+        stability_metrics.append(stability)
+        scenario_names.append(scenario['name'][:15] + "...")
+    
+    bars = ax4.bar(range(len(scenario_names)), stability_metrics, color=[s['color'] for s in scenarios], alpha=0.7)
+    ax4.set_ylabel('Strategy Stability (1/(1+Var))')
+    ax4.set_title('Strategy Stability by Scenario', fontweight='bold')
+    ax4.set_xticks(range(len(scenario_names)))
+    ax4.set_xticklabels(scenario_names, rotation=45, ha='right')
+    ax4.grid(True, alpha=0.3, axis='y')
+    
+    # Add value labels on bars
+    for bar, stability in zip(bars, stability_metrics):
+        height = bar.get_height()
+        ax4.text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                f'{stability:.3f}', ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
     plt.savefig(save_path, bbox_inches='tight', facecolor='white')
@@ -383,7 +539,7 @@ def create_comparison_analysis(save_path="figures/comparison_analysis.png"):
 
 def main():
     """Generate all enhanced figures."""
-    print("Generating enhanced visualizations...")
+    print("Generating enhanced visualizations with diverse parameters...")
     
     # Set up plotting style
     setup_plotting_style()
@@ -391,15 +547,15 @@ def main():
     # Create output directory
     os.makedirs("figures", exist_ok=True)
     
-    # Run a basic simulation for analysis
+    # Run a basic simulation for analysis with more interesting parameters
     print("Running simulation for analysis...")
     agent_1, agent_2, D = construct_agents(
-        lr_pB_1=0.1, 
-        lr_pB_2=0.1, 
+        lr_pB_1=0.15, 
+        lr_pB_2=0.15, 
         factors_to_learn="all",
         action_selection="stochastic",
-        alpha_1=1.0,
-        alpha_2=1.0
+        alpha_1=2.0,
+        alpha_2=2.0
     )
     
     sim = DualAgentSimulation(agent_1, agent_2)
@@ -418,8 +574,11 @@ def main():
     print("Creating enhanced network visualization...")
     create_network_visualization_enhanced()
     
-    print("Creating comparison analysis...")
+    print("Creating comparison analysis with diverse parameters...")
     create_comparison_analysis()
+    
+    print("Creating learning dynamics analysis...")
+    create_learning_dynamics_analysis()
     
     print("All enhanced figures generated successfully!")
     print("Figures saved to the 'figures' directory")

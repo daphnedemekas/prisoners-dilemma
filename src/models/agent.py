@@ -59,10 +59,14 @@ class PrisonersDilemmaAgent:
         B = self._construct_B()
         
         C = utils.obj_array(1)
-        C[0] = np.array([3, 1, 4, 2])  # Reward preferences
+        # Modified reward preferences to create more interesting dynamics
+        # Original: [3, 1, 4, 2] - Standard PD rewards
+        # Modified: [3.5, 0.5, 4.5, 1.5] - More extreme rewards to create clearer differences
+        C[0] = np.array([3.5, 0.5, 4.5, 1.5])  # Enhanced reward preferences
         
         D = utils.obj_array(1)
-        D[0] = np.array([0.25, 0.25, 0.25, 0.25])  # Initial state beliefs
+        # Start with slightly biased initial beliefs to create more interesting dynamics
+        D[0] = np.array([0.3, 0.2, 0.2, 0.3])  # Slightly biased initial state beliefs
         
         pB_1 = utils.dirichlet_like(B)
         pB_2 = utils.dirichlet_like(B)
