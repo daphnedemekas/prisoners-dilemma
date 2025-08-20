@@ -117,16 +117,6 @@ How different learning rate and precision parameter combinations affect:
 - **Convergence Times**: How quickly strategies stabilize with different learning dynamics
 - **Average Cumulative Rewards**: Long-term performance metrics
 
-### Learning Dynamics Analysis
-
-![Learning Dynamics](src/figures/learning_dynamics.png)
-
-How different initial conditions and learning parameters affect strategy evolution:
-- **Initial Conditions Impact**: How starting states (cooperative vs. defecting) influence long-term behavior
-- **Individual Strategy Evolution**: How each agent's strategy develops over time
-- **Reward Dynamics**: How average rewards change with different learning scenarios
-- **Strategy Stability**: Which parameter combinations lead to more stable strategies
-
 ## Key Findings
 
 ### Learning Rate and Precision Effects
@@ -170,17 +160,6 @@ Convergence time varies significantly with learning rates:
 - Fast learners converge quickly but may not find optimal strategies
 - Slow learners take longer but may achieve better long-term outcomes
 
-## Technical Details
-
-### Active Inference Framework
-
-The agents use the active inference framework, which includes:
-
-1. **State Inference**: Agents infer the current state of the game
-2. **Policy Selection**: Agents choose actions based on expected free energy
-3. **Learning**: Agents update their transition models based on experience
-4. **Action Sampling**: Actions are sampled from policy distributions
-
 ### Reward Structure
 
 The Prisoner's Dilemma reward structure:
@@ -188,59 +167,6 @@ The Prisoner's Dilemma reward structure:
 - **Agent 1 Cooperates, Agent 2 Defects**: (0.5, 4.5) - Sucker's payoff
 - **Agent 1 Defects, Agent 2 Cooperates**: (4.5, 0.5) - Temptation
 - **Both Defect**: (1.5, 1.5) - Mutual defection
-
-### Transition Matrices
-
-Agents learn transition matrices that model how their actions affect the game state. These matrices evolve over time as agents learn from their interactions.
-
-## Extending the Simulation
-
-### Adding New Agent Types
-
-Extend the `PrisonersDilemmaAgent` class:
-
-```python
-class CustomAgent(PrisonersDilemmaAgent):
-    def __init__(self, custom_param, **kwargs):
-        super().__init__(**kwargs)
-        self.custom_param = custom_param
-    
-    def custom_method(self):
-        # Custom behavior
-        pass
-```
-
-### New Network Topologies
-
-Extend the `NetworkSimulation` class:
-
-```python
-def _create_custom_network(self):
-    # Create custom network topology
-    return custom_network
-```
-
-### Additional Metrics
-
-Extend the `SimulationVisualizer` class:
-
-```python
-def plot_custom_metric(self, data, save_name="custom_metric.png"):
-    # Create custom plot
-    pass
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Citation
 
@@ -254,14 +180,3 @@ If you use this code in your research, please cite:
   url={https://github.com/yourusername/prisoners-dilemma}
 }
 ```
-
-## Acknowledgments
-
-- Active inference framework based on the work of Karl Friston
-- Network analysis using NetworkX
-- Visualization using Matplotlib
-- Simulation framework inspired by pymdp library
-
-## Contact
-
-For questions or contributions, please open an issue on GitHub or contact the maintainers.
